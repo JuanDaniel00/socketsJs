@@ -1,0 +1,26 @@
+{
+  "ultimo": 73,
+  "hoy": 17,
+  "tickets": [
+    { "numero": 60, "escritorio": null },
+    { "numero": 61, "escritorio": null },
+    { "numero": 62, "escritorio": null },
+    { "numero": 63, "escritorio": null },
+    { "numero": 64, "escritorio": null },
+    { "numero": 65, "escritorio": null },
+    { "numero": 66, "escritorio": null },
+    { "numero": 67, "escritorio": null },
+    { "numero": 68, "escritorio": null },
+    { "numero": 69, "escritorio": null },
+    { "numero": 70, "escritorio": null },
+    { "numero": 71, "escritorio": null },
+    { "numero": 72, "escritorio": null },
+    { "numero": 73, "escritorio": null }
+  ],
+  "ultimos4": [
+    { "numero": 59, "escritorio": "aa" },
+    { "numero": 58, "escritorio": "aa" },
+    { "numero": 57, "escritorio": "aa" },
+    { "numero": 56, "escritorio": "aa" }
+  ]
+}
