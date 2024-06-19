@@ -36,10 +36,22 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.emit('atender-ticket', { escritorio }, ({ ok, ticket, msg }) => {
             if (!ok) {
                 lblTicket.innerText = 'Nadie.';
-                return divAlerta.style.display = '';
+                divAlerta.style.display = '';
+                mostrarAlerta()
             }
 
             lblTicket.innerText = 'Ticket ' + ticket.numero;
         });
     });
+
+    function mostrarAlerta() {
+        var alerta = document.getElementById('alerta');
+        alerta.style.display = 'block'; // Mostrar el elemento
+
+        setTimeout(function () {
+            alerta.style.display = 'none'; // Ocultar después de 5 segundos
+        }, 2000);
+    }
+
+
 });

@@ -1,14 +1,25 @@
 import TicketControl from '../models/ticket-control.js';
-const ticketControl = new TicketControl();
+
+let ticketControl;
 
 const socketController = (socket, io) => {
-    // Cuando un cliente se conecta, inmediatamente le enviamos el estado actual de los últimos 4
+
+    // Inicializar ticketControl (solo una vez)
+    if (!ticketControl) {
+        ticketControl = new TicketControl(io);
+    }
+
+    // Emitir estado inicial al conectar un nuevo cliente
+    socket.emit('ticket-actual', ticketControl.ultimo);
     socket.emit('estado-actual', ticketControl.ultimos4);
+    socket.emit('tickets-pendientes', ticketControl.tickets.length);
+
 
     socket.on('siguiente-ticket', (payload, callback) => {
         const siguiente = ticketControl.siguiente();
+        io.emit('ticket-actual', ticketControl.ultimo); // Emitir el último número de ticket a todos
+        io.emit('tickets-pendientes', ticketControl.tickets.length);
         callback(siguiente);
-        io.emit('ticket-actual', ticketControl.ultimo);
     });
 
     socket.on('atender-ticket', ({ escritorio }, callback) => {
@@ -20,6 +31,8 @@ const socketController = (socket, io) => {
         }
 
         const ticket = ticketControl.atenderTicket(escritorio);
+        io.emit('estado-actual', ticketControl.ultimos4); // Emitir los últimos 4 tickets a todos
+        io.emit('tickets-pendientes', ticketControl.tickets.length);
 
         if (!ticket) {
             callback({
@@ -31,8 +44,6 @@ const socketController = (socket, io) => {
                 ok: true,
                 ticket
             });
-            // Emitir los cambios de los últimos 4 a todos los clientes
-            io.emit('ultimos-4', ticketControl.ultimos4);
         }
     });
 };
