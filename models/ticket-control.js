@@ -1,84 +1,84 @@
-import { writeFileSync } from 'fs';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+    import { writeFileSync } from 'fs';
+    import { dirname, join } from 'path';
+    import { fileURLToPath } from 'url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const dbPath = join(__dirname, '../db/data.json');
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const dbPath = join(__dirname, '../db/data.json');
 
-class Ticket {
-    constructor(numero, escritorio) {
-        this.numero = numero;
-        this.escritorio = escritorio;
-    }
-}
-
-class TicketControl {
-
-    constructor() {
-        this.ultimo = 0;
-        this.hoy = new Date().getDate(); // 27
-        this.tickets = [];
-        this.ultimos4 = [];
-
-        this.init();
-    }
-
-    get toJson() {
-        return {
-            ultimo: this.ultimo,
-            hoy: this.hoy,
-            tickets: this.tickets,
-            ultimos4: this.ultimos4,
+    class Ticket {
+        constructor(numero, escritorio) {
+            this.numero = numero;
+            this.escritorio = escritorio;
         }
     }
 
-    async init() {
-        const dbData = await import('../db/data.json', {
-            assert: { type: 'json' }
-        });
-        const { hoy, tickets, ultimo, ultimos4 } = dbData.default;
-        if (hoy === this.hoy) {
-            this.tickets = tickets;
-            this.ultimo = ultimo;
-            this.ultimos4 = ultimos4;
-        } else {
-            // Es otro día
+    class TicketControl {
+
+        constructor() {
+            this.ultimo = 0;
+            this.hoy = new Date().getDate(); // 27
+            this.tickets = [];
+            this.ultimos4 = [];
+
+            this.init();
+        }
+
+        get toJson() {
+            return {
+                ultimo: this.ultimo,
+                hoy: this.hoy,
+                tickets: this.tickets,
+                ultimos4: this.ultimos4,
+            }
+        }
+
+        async init() {
+            const dbData = await import('../db/data.json', {
+                assert: { type: 'json' }
+            });
+            const { hoy, tickets, ultimo, ultimos4 } = dbData.default;
+            if (hoy === this.hoy) {
+                this.tickets = tickets;
+                this.ultimo = ultimo;
+                this.ultimos4 = ultimos4;
+            } else {
+                // Es otro día
+                this.guardarDB();
+            }
+        }
+
+        guardarDB() {
+            writeFileSync(dbPath, JSON.stringify(this.toJson));
+        }
+
+        siguiente() {
+            this.ultimo += 1;
+            const ticket = new Ticket(this.ultimo, null);
+            this.tickets.push(ticket);
+
             this.guardarDB();
+            return 'Ticket ' + ticket.numero;
+        }
+
+        atenderTicket(escritorio) {
+            // No tenemos tickets
+            if (this.tickets.length === 0) {
+                return null;
+            }
+
+            const ticket = this.tickets.shift(); // this.tickets[0];
+            ticket.escritorio = escritorio;
+
+            this.ultimos4.unshift(ticket);
+
+            if (this.ultimos4.length > 4) {
+                this.ultimos4.splice(-1, 1);
+            }
+
+            this.guardarDB();
+
+            return ticket;
         }
     }
 
-    guardarDB() {
-        writeFileSync(dbPath, JSON.stringify(this.toJson));
-    }
-
-    siguiente() {
-        this.ultimo += 1;
-        const ticket = new Ticket(this.ultimo, null);
-        this.tickets.push(ticket);
-
-        this.guardarDB();
-        return 'Ticket ' + ticket.numero;
-    }
-
-    atenderTicket(escritorio) {
-        // No tenemos tickets
-        if (this.tickets.length === 0) {
-            return null;
-        }
-
-        const ticket = this.tickets.shift(); // this.tickets[0];
-        ticket.escritorio = escritorio;
-
-        this.ultimos4.unshift(ticket);
-
-        if (this.ultimos4.length > 4) {
-            this.ultimos4.splice(-1, 1);
-        }
-
-        this.guardarDB();
-
-        return ticket;
-    }
-}
-
-export default TicketControl;
+    export default TicketControl;

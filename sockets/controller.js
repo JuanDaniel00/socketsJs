@@ -1,12 +1,9 @@
-
-import { Ticket } from '../models/tickets.js';
 import TicketControl from '../models/ticket-control.js';
 const ticketControl = new TicketControl();
 
-
-// Definición de la función socketController
 const socketController = (socket, io) => {
-
+    // Cuando un cliente se conecta, inmediatamente le enviamos el estado actual de los últimos 4
+    socket.emit('estado-actual', ticketControl.ultimos4);
 
     socket.on('siguiente-ticket', (payload, callback) => {
         const siguiente = ticketControl.siguiente();
@@ -24,22 +21,6 @@ const socketController = (socket, io) => {
 
         const ticket = ticketControl.atenderTicket(escritorio);
 
-        // TODO: Notificar cambio en los últimos 4
-        socket.on('estado-actual', (ultimos4) => {
-            // Actualizar la interfaz con los últimos 4
-            const [ul, ol, div] = ultimos4.length
-                ? ['ticket1', 'ticket2', 'ticket3', 'ticket4'].map(elem => document.querySelector('.' + elem))
-                : [null, null, null, null];
-
-            if (!ul) {
-                return;
-            }
-
-            ul.innerText = 'Ticket ' + ultimos4[0].numero;
-            ol.innerText = 'Ticket ' + ultimos4[1].numero;
-            div.innerText = 'Ticket ' + ultimos4[2].numero;
-        });
-
         if (!ticket) {
             callback({
                 ok: false,
@@ -50,20 +31,10 @@ const socketController = (socket, io) => {
                 ok: true,
                 ticket
             });
+            // Emitir los cambios de los últimos 4 a todos los clientes
+            io.emit('ultimos-4', ticketControl.ultimos4);
         }
     });
-    socket.on('ticket-actual', (ticket) => {
-        ticket.innerText = 'Ticket ' + ticket.numero;
-    });
-    socket.on('tickets-pendientes', (length) => {
-        lblPendientes.innerText = length;
-    });
-    socket.on('connect', () => {
-        console.log('Conectado');
-    });
-
-
-
-}
+};
 
 export { socketController };

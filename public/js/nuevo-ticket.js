@@ -1,4 +1,4 @@
-let contador=0
+let contador = 0
 
 const btn = document.getElementById('btnNuevoTicket')
 const lblNuevoTicket = document.getElementById('lblNuevoTicket')
@@ -18,7 +18,7 @@ nuevoTicket.addEventListener('click', () => {
 // 2:
 
 socket.on('ticket-actual', (ticket) => {
-    lblNuevoTicket.innerText =  `Ticket ` + ticket;
+    lblNuevoTicket.innerText = `Ticket ` + ticket;
 }
 );
 
@@ -46,5 +46,5 @@ socket.on('estado-actual', (ultimos4) => {
     div.innerText = 'Ticket ' + ultimos4[2].numero;
 }
 );
-        
+
 
