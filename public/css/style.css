@@ -6,6 +6,16 @@ body {
     color: white;
 }
 
+.container {
+    background-color: #161037;
+
+}
+
+.mt-5 {
+    margin-top: 5rem;
+    color: aquamarine;
+}
+
 table {
     width: 100%;
     height: 100%;
@@ -31,6 +41,7 @@ table {
 
 /* Nuevo-ticket */
 
-#lblPendientes {
-    font-size: 70px;
+#lblPendientes,
+#lblNuevoTicket {
+    font-size: 70px
 }

@@ -1,21 +1,20 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('btnNuevoTicket');
-    const lblNuevoTicket = document.getElementById('lblNuevoTicket');
-    const lblPendientes = document.getElementById('lblPendientes');
-
+document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("btnNuevoTicket");
+    const lblNuevoTicket = document.getElementById("lblNuevoTicket");
+  
     const socket = io();
-
-    socket.on('connect', () => {
-
-        socket.on('tickets-pendientes', (length) => {
-            lblPendientes.innerText = length;
-        });
+  
+    btn.addEventListener("click", () => {
+      socket.emit("siguiente-ticket", null, (siguienteTicket) => {
+        if (siguienteTicket && siguienteTicket.numero !== undefined) {
+          lblNuevoTicket.textContent = `Ticket ${siguienteTicket.numero}`;
+        }
+      });
     });
-
-    btn.addEventListener('click', () => {
-        socket.emit('siguiente-ticket', null, (ticket) => {
-            lblNuevoTicket.innerText = ticket;
-        });
+  
+    socket.on("ticket-actual", (ticket) => {
+      if (ticket !== undefined) {
+        lblNuevoTicket.textContent = `Ticket ${ticket}`;
+      }
     });
-});
-
+  });
