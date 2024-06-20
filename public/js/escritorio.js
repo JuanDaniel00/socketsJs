@@ -32,14 +32,18 @@ document.addEventListener('DOMContentLoaded', () => {
         lblPendientes.innerText = length;
     });
 
+ const audio = new Audio('./../audio/new-ticket.mp3'); 
+
     btnAtender.addEventListener('click', () => {
         socket.emit('atender-ticket', { escritorio }, ({ ok, ticket, msg }) => {
+
             if (!ok) {
                 lblTicket.innerText = 'Nadie.';
                 divAlerta.style.display = '';
                 mostrarAlerta()
+            } else {
+                audio.play();
             }
-
             lblTicket.innerText = 'Ticket ' + ticket.numero;
         });
     });
